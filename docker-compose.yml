@@ -1,0 +1,61 @@
+version: "3.9"
+services:
+  #Service api_langue
+  api_langue:
+    #Permet de crée une image depuis le dockerfile
+    build:
+      context: ./api_langue/
+      dockerfile: Dockerfile
+    #Nom du container
+    container_name: api_langue
+    #Définis le réseau
+    networks:
+      - app
+    #Permet de mettre les variable d'environnement dans un fichier et ainsi pour poster le docker-compose sans donnée compromettante
+    env_file: .env
+  #Service api_proxy
+  api_proxy:
+    build:
+      context: ./api_proxy/
+      dockerfile: Dockerfile
+    #Nom du container
+    container_name: api_proxy
+    #Expose le port 8080 de l'host vers le 80 du container
+    ports:
+      - "8080:5002"
+    #Execute d'abord l'api le proxy
+    depends_on:
+      - api_langue
+    #Définis le réseau
+    networks:
+      - app
+      - front
+    #Permet de mettre les variable d'environnement
+    environment:
+    - URL_API_PYTHON=api_langue:5000
+  #Service api_proxy
+  web:
+    build:
+      context: ./front_formulaire/
+      dockerfile: Dockerfile
+      args:
+        VUE_APP_API: mdr
+    #Nom du container
+    container_name: web
+    #Expose le port 8080 de l'host vers le 80 du container
+    ports:
+      - "8081:80"
+    #Execute d'abord l'api le proxy
+    depends_on:
+      - api_proxy
+    #Définis le réseau
+    networks:
+      - front
+    #Permet de mettre les variable d'environnement
+    #environment:
+    #- VUE_APP_API=mdr
+
+#Définis le réseau
+networks:
+  app:
+  front:
