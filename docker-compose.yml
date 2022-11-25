@@ -9,10 +9,13 @@ services:
     #Nom du container
     container_name: api_langue
     #Définis le réseau
-    networks:
-      - app
+    #networks:
+    #  - app
     #Permet de mettre les variable d'environnement dans un fichier et ainsi pour poster le docker-compose sans donnée compromettante
     env_file: .env
+    labels:
+      #- traefik.http.routers.web-api.rule=Host(`trdad-api.dan.ynovaix.com`)
+      - traefik.enable=true
   #Service api_proxy
   api_proxy:
     build:
@@ -21,41 +24,63 @@ services:
     #Nom du container
     container_name: api_proxy
     #Expose le port 8080 de l'host vers le 80 du container
-    ports:
-      - "8080:5002"
+    #ports:
+    #  - "8080:5002"
     #Execute d'abord l'api le proxy
     depends_on:
       - api_langue
     #Définis le réseau
-    networks:
-      - app
-      - front
+    #network_mode: host
+    #networks:
+    #  - app
+      #- traefik-public
     #Permet de mettre les variable d'environnement
     environment:
     - URL_API_PYTHON=api_langue:5000
+    labels:
+      - traefik.http.routers.api-proxy-livraison-traduction.rule=Host(`trad-api.dan.ynovaix.com`)
+      - traefik.enable=true
+      #- traefik.http.routers.api-proxy-livraison-traduction.entrypoints=http
+      #- traefik.docker.network=traefik-public
+      #- traefik.http.routers.web-api.service=web-api
+      #- traefik.http.services.api-proxy-livraison-traduction.loadbalaner.server.port=5002
+      #- traefik.docker.network=traefik-public
+
   #Service api_proxy
   web:
     build:
       context: ./front_formulaire/
       dockerfile: Dockerfile
       args:
-        VUE_APP_API: mdr
+        VUE_APP_API: https://trad-api.dan.ynovaix.com
     #Nom du container
+    #networks:
+      #- traefik-public
     container_name: web
+    #network_mode: host
     #Expose le port 8080 de l'host vers le 80 du container
-    ports:
-      - "8081:80"
+    #ports:
+    #  - "8081:80"
     #Execute d'abord l'api le proxy
-    depends_on:
-      - api_proxy
+    #depends_on:
+    #  - api_proxy
     #Définis le réseau
-    networks:
-      - front
     #Permet de mettre les variable d'environnement
     #environment:
     #- VUE_APP_API=mdr
+    labels:
+      - traefik.http.routers.web-livraison-traduction.rule=Host(`trad.dan.ynovaix.com`)
+      - traefik.enable=true
+      #- traefik.http.routers.web-livraison-traduction.entrypoints=http
+      #- traefik.docker.network=traefik
+      #- traefik.http.routers.web-livraison-traduction.service=web-livraison-traduction
+      #- traefik.http.services.web-livraison-traduction.loadbalaner.server.port=80
+      #- traefik.docker.network=traefik-public
+
+
 
 #Définis le réseau
-networks:
-  app:
-  front:
+#networks:
+#  app:
+#  traefik-public:
+#    external: true
