@@ -1,5 +1,29 @@
 <template>
     <v-layout row justify-center="">
+        <v-row justify="center">
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="290"
+    >
+      <v-card>
+        <v-card-title class="text-h5">
+          Information
+        </v-card-title>
+        <v-card-text>{{text_info}}</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="dialog = false"
+          >
+            Ok
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
         <v-container fluid>
             <v-container mt-1>
                 <h1 class="title"><b>Translated text to speech</b></h1>
@@ -57,12 +81,17 @@
     import axios from 'axios';
     import { TextBlopService } from '../services/detectlangue'
     import { translangueService } from '../services/translangue'
+    import dotenv from 'dotenv'
+
+    dotenv.config()
     export default {
         components: {
         VuetifyAudio: () => import('vuetify-audio'),
     },
         data(){
           return{
+            dialog:false,
+            text_info:"",
             audiopreview:"",
             audiodownload:"",
             lang_to_trad:"",
@@ -90,7 +119,8 @@
                 this.timer = setTimeout(() => {
                     if(this.text_init!="") {
                         this.textblop.detectLangue(this.text_init).then(response => {
-                            if(response != "Erreur"){
+                            console.log(response.error)
+                            if(!response.error){
                             this.label_lang_detecte=response
                             }
                             else{
@@ -111,6 +141,8 @@
                     'language':this.lang_to_trad.code,
                     'texte':this.text_traduct
                 }
+                this.audiodownload =""
+                this.audiopreview =""
                 axios({
                     // url: 'http://localhost:5002/audiolangue',
                     url: process.env.VUE_APP_API + "/audiolangue",
@@ -120,10 +152,15 @@
                     if(response.data["mp3"]){
                     this.audiodownload ="data:audio/mpeg3;charset=utf-8;base64,"+response.data["mp3"]
                     this.audiopreview ="data:audio/wav;charset=utf-8;base64,"+response.data["wav"]
+                    this.text_info="Audio disponible pour le "+ this.lang_to_trad.name
+                    this.dialog=true
                     }
                     else{
                     this.audiodownload =""
                     this.audiopreview =""
+                    this.text_info="Pas d'audio disponible pour le "+ this.lang_to_trad.name
+                    this.dialog=true
+
                     }
                 });                        
                     })
