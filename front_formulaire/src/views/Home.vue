@@ -66,7 +66,14 @@
                             auto-grow
                             v-model="text_traduct"
                         ></v-textarea>
-                        <vuetify-audio v-if="this.audiopreview != ''" :file=this.audiopreview color="success" :ended="audioFinish" downloadable></vuetify-audio>
+                        <p v-if="loading==true">Chargement audio</p>
+                        <v-progress-circular
+                            v-if="loading==true"
+                            indeterminate
+                            color="dark"
+                        >
+                        </v-progress-circular>
+                        <vuetify-audio v-if="this.audiopreview != ''" :file=this.audiopreview color="success" :ended="audioFinish" ></vuetify-audio>
                         <v-btn v-if="this.text_traduct && this.audiodownload != ''" block @click="onClick()">DownLoad MP3</v-btn>
                     </v-flex>
                 </v-layout>
@@ -91,6 +98,7 @@
         data(){
           return{
             dialog:false,
+            loading:false,
             text_info:"",
             audiopreview:"",
             audiodownload:"",
@@ -119,7 +127,6 @@
                 this.timer = setTimeout(() => {
                     if(this.text_init!="") {
                         this.textblop.detectLangue(this.text_init).then(response => {
-                            console.log(response.error)
                             if(!response.error){
                             this.label_lang_detecte=response
                             }
@@ -130,10 +137,13 @@
                     }
                     else{
                         this.label_lang_detecte=""
+                        this.lang_to_trad=""
                     }
                 }, 800);
             },
             selectLang(){
+                this.audiodownload =""
+                this.audiopreview =""
                 if (this.text_init != ""){
                     this.traduction_langue.translangue(this.text_init,this.label_lang_detecte.code,this.lang_to_trad.code).then(response =>{
                         this.text_traduct=response
@@ -141,8 +151,8 @@
                     'language':this.lang_to_trad.code,
                     'texte':this.text_traduct
                 }
-                this.audiodownload =""
-                this.audiopreview =""
+                this.loading=true
+
                 axios({
                     // url: 'http://localhost:5002/audiolangue',
                     url: process.env.VUE_APP_API + "/audiolangue",
@@ -150,17 +160,18 @@
                 }).then((response) => {
                     console.log(response)
                     if(response.data["mp3"]){
-                    this.audiodownload ="data:audio/mpeg3;charset=utf-8;base64,"+response.data["mp3"]
-                    this.audiopreview ="data:audio/wav;charset=utf-8;base64,"+response.data["wav"]
                     this.text_info="Audio disponible pour le "+ this.lang_to_trad.name
                     this.dialog=true
+                    this.audiodownload ="data:audio/mpeg3;charset=utf-8;base64,"+response.data["mp3"]
+                    this.audiopreview ="data:audio/wav;charset=utf-8;base64,"+response.data["wav"]
+                    this.loading=false
                     }
                     else{
-                    this.audiodownload =""
-                    this.audiopreview =""
                     this.text_info="Pas d'audio disponible pour le "+ this.lang_to_trad.name
                     this.dialog=true
-
+                    this.audiodownload =""
+                    this.audiopreview =""
+                    this.loading=false
                     }
                 });                        
                     })
