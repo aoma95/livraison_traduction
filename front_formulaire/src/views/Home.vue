@@ -133,7 +133,15 @@
                             else{
                             this.label_lang_detecte=""
                             }
-                        })
+                        }).catch(error =>{
+                            console.log(error.response.status)
+                            console.log(error.response.status == 429)
+                            if (error.response.status == 429){
+                                this.text_info="Le nombre de requete est dépassé attendre quelque minute"
+                                this.dialog=true
+                            }
+                        }
+                        );
                     }
                     else{
                         this.label_lang_detecte=""
@@ -173,8 +181,24 @@
                     this.audiopreview =""
                     this.loading=false
                     }
-                });                        
-                    })
+                }).catch(error =>{
+                            console.log(error.response.status)
+                            console.log(error.response.status == 429)
+                            if (error.response.status == 429){
+                                this.text_info="Le nombre de requete est dépassé attendre quelque minute"
+                                this.dialog=true
+                            }
+                        }
+                        );                        
+                    }).catch(error =>{
+                            console.log(error.response.status)
+                            console.log(error.response.status == 429)
+                            if (error.response.status == 429){
+                                this.text_info="Le nombre de requete est dépassé attendre quelque minute"
+                                this.dialog=true
+                            }
+                        }
+                        )
                 }
             }
         }
