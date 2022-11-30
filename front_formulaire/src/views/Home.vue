@@ -130,7 +130,6 @@
                             if(!response.error){
                             this.label_lang_detecte=response
                             if(this.lang_to_trad!=""){
-                                console.log('mmmmmm')
                                 this.selectLang()
                             }
                             
@@ -139,8 +138,6 @@
                             this.label_lang_detecte=""
                             }
                         }).catch(error =>{
-                            console.log(error.response.status)
-                            console.log(error.response.status == 429)
                             if (error.response.status == 429){
                                 this.text_info="Le nombre de requete est dépassé attendre quelque minute"
                                 this.dialog=true
