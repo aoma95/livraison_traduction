@@ -129,6 +129,11 @@
                         this.textblop.detectLangue(this.text_init).then(response => {
                             if(!response.error){
                             this.label_lang_detecte=response
+                            if(this.lang_to_trad!=""){
+                                console.log('mmmmmm')
+                                this.selectLang()
+                            }
+                            
                             }
                             else{
                             this.label_lang_detecte=""
