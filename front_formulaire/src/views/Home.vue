@@ -139,6 +139,8 @@
                             if (error.response.status == 429){
                                 this.text_info="Le nombre de requete est dépassé attendre quelque minute"
                                 this.dialog=true
+                                this.loading=false
+                                this.text_traduct=""
                             }
                         }
                         );
@@ -187,6 +189,8 @@
                             if (error.response.status == 429){
                                 this.text_info="Le nombre de requete est dépassé attendre quelque minute"
                                 this.dialog=true
+                                this.loading=false
+                                this.text_traduct=""
                             }
                         }
                         );                        
@@ -196,6 +200,8 @@
                             if (error.response.status == 429){
                                 this.text_info="Le nombre de requete est dépassé attendre quelque minute"
                                 this.dialog=true
+                                this.loading=false
+                                this.text_traduct=""
                             }
                         }
                         )
