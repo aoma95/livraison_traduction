@@ -37,6 +37,8 @@ services:
     #Permet de mettre les variable d'environnement
     environment:
     - URL_API_PYTHON=api_langue:5000
+    - MAX_REQUEST=50
+    - TIME_LIMITE=1
     labels:
       - traefik.http.routers.api-proxy-livraison-traduction.rule=Host(`trad-api.dan.ynovaix.com`)
       - traefik.enable=true
