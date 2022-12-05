@@ -2,3 +2,8 @@
 node_module
 front_formulaire/node_modules/
 Documentation
+api_langue/controllers/__pycache__/
+api_langue/file.mp3
+api_langue/routers/__pycache__/
+api_proxy/node_modules/
+api_proxy/package-lock.json
