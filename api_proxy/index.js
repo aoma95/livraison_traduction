@@ -8,6 +8,8 @@ const PORT = process.env.PORT || 5002
 const TIME_LIMITE = process.env.TIME_LIMITE || 15
 const MAX_REQUEST = process.env.MAX_REQUEST || 100
 const rateLimit = require('express-rate-limit')
+var {expressjwt: jwt}= require('express-jwt');
+var jwks = require('jwks-rsa');
 
 const limiter = rateLimit({
 	windowMs: TIME_LIMITE * 60 * 1000, // 15 minutes
@@ -15,11 +17,23 @@ const limiter = rateLimit({
 	standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
 	legacyHeaders: false, // Disable the `X-RateLimit-*` headers
 })
+var jwtCheck = jwt({
+	secret: jwks.expressJwtSecret({
+		cache: true,
+		rateLimit: true,
+		jwksRequestsPerMinute: 5,
+		jwksUri: 'https://dev-r2dd4qaux7uqpktk.us.auth0.com/.well-known/jwks.json'
+  }),
+  audience: 'http://localhost:5002',
+  issuer: 'https://dev-r2dd4qaux7uqpktk.us.auth0.com/',
+  algorithms: ['RS256']
+});
+
+
 
 const app = express()
-// app.use(bodyParser.urlencoded())
-// app.use(bodyParser.urlencoded({ extended: false }))
-// app.use(bodyParser.json())
+
+app.use(jwtCheck);
 app.use(upload.array()); 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
