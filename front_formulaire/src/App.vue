@@ -4,15 +4,6 @@
             app
             dark
     >
-    <v-btn
-            v-if="$auth.isAuthenticated"
-            color="blue darken-1"
-            text
-            @click="logout"
-          >
-            Se déconnecter
-          </v-btn>
-          <button @click="callApi">Call</button>
     </v-app-bar>
     <v-content>
       <v-container
@@ -23,8 +14,7 @@
                 align="center"
                 justify="center"
         >
-
-          <v-col v-if="$auth.isAuthenticated" class="text-center">
+          <v-col class="text-center">
             <transition name="zoom" mode="out-in" appear>
             <router-view></router-view>
             </transition>
@@ -43,7 +33,6 @@
 
 
 <script>
-import axios from "axios";
   export default {
     name:'App',
     data(){
@@ -51,27 +40,6 @@ import axios from "axios";
       }
     },
     methods:{
-      login() {
-      this.$auth.loginWithRedirect();
-    },
-    // Log the user out
-    logout() {
-      this.$auth.logout({
-        returnTo: window.location.origin
-      });
-    },
-    async callApi() {
-        // Get the access token from the auth wrapper
-        const token = await this.$auth.getTokenSilently();
-
-        // Use Axios to make a call to the API
-        const { data } = await axios.get('http://localhost:5000', {
-          headers: {
-            Authorization: `Bearer <%= "${token}" %>` // send the access token through the 'Authorization' header
-          }
-        });
-        console.log(token,data);
-      }
     },
   };
 </script>

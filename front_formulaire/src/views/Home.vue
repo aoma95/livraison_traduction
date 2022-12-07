@@ -27,7 +27,6 @@
         <v-container fluid>
             <v-container mt-1>
                 <h1 class="title"><b>Translated text to speech</b></h1>
-                <h2><pre>{{ JSON.stringify($auth.user, null, 2) }}</pre></h2>
             </v-container>
                 <v-layout row justify-space-around="">
                     <v-flex xs8 md4>
@@ -80,6 +79,9 @@
                 </v-layout>
         </v-container>
     </v-layout>
+
+    
+    
 </template>
 
 <script>
