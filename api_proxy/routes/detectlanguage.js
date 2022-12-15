@@ -11,7 +11,6 @@ router.post('/', async (req, res) => {
                 "texte": req.body.texte
             }
             const apiRes = await needle('post', `${API_PYTHON}`,data_lang)
-            console.log(apiRes)
             const data = apiRes.body
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Origin', '*');

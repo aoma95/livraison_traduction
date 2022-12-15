@@ -27,7 +27,6 @@
         <v-container fluid>
             <v-container mt-1>
                 <h1 class="title"><b>Translated text to speech</b></h1>
-                <h2><pre>{{ JSON.stringify($auth.user, null, 2) }}</pre></h2>
             </v-container>
                 <v-layout row justify-space-around="">
                     <v-flex xs8 md4>
@@ -124,7 +123,7 @@
                 }
                 this.timer = setTimeout(() => {
                     if(this.text_init!="") {
-                        this.textblop.detectLangue(this.text_init).then(response => {
+                        this.textblop.detectLangue(this.text_init,this.$cookies.get("jwt")).then(response => {
                             if(!response.error){
                             this.label_lang_detecte=response
                             if(this.lang_to_trad!=""){
@@ -155,7 +154,7 @@
                 this.audiodownload =""
                 this.audiopreview =""
                 if (this.text_init != ""){
-                    this.traduction_langue.translangue(this.text_init,this.label_lang_detecte.code,this.lang_to_trad.code).then(response =>{
+                    this.traduction_langue.translangue(this.text_init,this.label_lang_detecte.code,this.lang_to_trad.code,this.$cookies.get("jwt")).then(response =>{
                         this.text_traduct=response
                         let data={
                     'language':this.lang_to_trad.code,
@@ -166,7 +165,10 @@
                 axios({
                     // url: 'http://localhost:5002/audiolangue',
                     url: process.env.VUE_APP_API + "/audiolangue",
-                    method: 'POST',data
+                    method: 'POST',
+                    headers:{
+                        Authorization: `Bearer ${this.$cookies.get('jwt')}`
+                    },data
                 }).then((response) => {
                     console.log(response)
                     if(response.data["mp3"]){

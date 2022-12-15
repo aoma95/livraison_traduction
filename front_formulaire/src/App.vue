@@ -6,13 +6,13 @@
     >
     <v-btn
             v-if="$auth.isAuthenticated"
-            color="blue darken-1"
+            color="blue darken-2"
             text
             @click="logout"
           >
             Se déconnecter
           </v-btn>
-          <button @click="callApi">Call</button>
+          <h1 v-if="$auth.isAuthenticated">{{ $auth.user.nickname }}</h1>
     </v-app-bar>
     <v-content>
       <v-container
@@ -43,12 +43,21 @@
 
 
 <script>
-import axios from "axios";
   export default {
     name:'App',
     data(){
       return{
       }
+    },
+    updated: async function() {
+      if (this.$auth.isAuthenticated){
+        let token = await this.$auth.getTokenSilently()
+        console.log(token)
+        this.$cookies.set('jwt', token,{
+          httpOnly: true,
+        })
+      }
+
     },
     methods:{
       login() {
@@ -60,18 +69,6 @@ import axios from "axios";
         returnTo: window.location.origin
       });
     },
-    async callApi() {
-        // Get the access token from the auth wrapper
-        const token = await this.$auth.getTokenSilently();
-
-        // Use Axios to make a call to the API
-        const { data } = await axios.get('http://localhost:5000', {
-          headers: {
-            Authorization: `Bearer <%= "${token}" %>` // send the access token through the 'Authorization' header
-          }
-        });
-        console.log(token,data);
-      }
     },
   };
 </script>
