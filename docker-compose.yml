@@ -24,8 +24,8 @@ services:
     #Nom du container
     container_name: api_proxy
     #Expose le port 8080 de l'host vers le 80 du container
-    #ports:
-    #  - "8080:5002"
+    # ports:
+    #  - "5002:5002"
     #Execute d'abord l'api le proxy
     depends_on:
       - api_langue
@@ -36,6 +36,8 @@ services:
       #- traefik-public
     #Permet de mettre les variable d'environnement
     environment:
+    - ISSUER_BASE_URL=${ISSUER_BASE_URL}
+    - AUDIENCE=${AUDIENCE}
     - URL_API_PYTHON=api_langue:5000
     - MAX_REQUEST=50
     - TIME_LIMITE=1
@@ -54,15 +56,18 @@ services:
       context: ./front_formulaire/
       dockerfile: Dockerfile
       args:
-        VUE_APP_API: https://trad-api.dan.ynovaix.com
+        VUE_APP_API: ${VUE_APP_API}
+        VUE_APP_API_DOMAIN: ${VUE_APP_API_DOMAIN}
+        VUE_APP_API_CLIENT_ID: ${VUE_APP_API_CLIENT_ID}
+        VUE_APP_API_AUDIENCE: ${VUE_APP_API_AUDIENCE}
     #Nom du container
     #networks:
       #- traefik-public
     container_name: web
     #network_mode: host
     #Expose le port 8080 de l'host vers le 80 du container
-    #ports:
-    #  - "8081:80"
+    # ports:
+    #  - "8080:80"
     #Execute d'abord l'api le proxy
     #depends_on:
     #  - api_proxy
