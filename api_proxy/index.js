@@ -7,6 +7,8 @@ var upload = multer();
 const PORT = process.env.PORT || 5002
 const TIME_LIMITE = process.env.TIME_LIMITE || 15
 const MAX_REQUEST = process.env.MAX_REQUEST || 100
+const AUDIENCE = process.env.AUDIENCE
+const ISSUER = process.env.ISSUER_BASE_URL
 const rateLimit = require('express-rate-limit')
 var {expressjwt: jwt}= require('express-jwt');
 var jwks = require('jwks-rsa');
@@ -22,10 +24,10 @@ var jwtCheck = jwt({
 		cache: true,
 		rateLimit: true,
 		jwksRequestsPerMinute: 5,
-		jwksUri: 'https://dev-r2dd4qaux7uqpktk.us.auth0.com/.well-known/jwks.json'
+		jwksUri: ISSUER + '.well-known/jwks.json'
   }),
-  audience: 'http://localhost:5002',
-  issuer: 'https://dev-r2dd4qaux7uqpktk.us.auth0.com/',
+  audience: AUDIENCE,
+  issuer: ISSUER,
   algorithms: ['RS256']
 });
 
